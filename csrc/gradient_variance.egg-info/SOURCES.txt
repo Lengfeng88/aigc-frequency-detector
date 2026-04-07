@@ -1,9 +1,0 @@
-gradient_variance.cpp
-gradient_variance_cpu.cpp
-gradient_variance_cuda.cu
-setup.py
-gradient_variance.egg-info/PKG-INFO
-gradient_variance.egg-info/SOURCES.txt
-gradient_variance.egg-info/dependency_links.txt
-gradient_variance.egg-info/not-zip-safe
-gradient_variance.egg-info/top_level.txt
