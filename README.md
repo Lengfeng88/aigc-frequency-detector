@@ -63,24 +63,6 @@ Key Innovations
 - NVIDIA GPU with CUDA 12.1 support
 - 8GB+ RAM
 
-### Installation
-```bash
-# Clone repository
-git clone https://github.com/yourusername/aigc-frequency-detector.git
-cd aigc-frequency-detector
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Build custom CUDA operator
-cd csrc
-python setup.py develop
-cd ..
-
 Dataset Structure
 
 data/
@@ -145,14 +127,17 @@ The custom CUDA operator demonstrates classic optimization principles:
 Reduced kernel launches: 6 → 1 (83% reduction)
 Eliminated memory transfers: No intermediate tensor allocations
 Improved memory coalescing: Single pass through input data
+
 🤝 Contributing
 Contributions are welcome! Please open an issue or submit a pull request for:
 Additional model architectures
 Support for other AIGC models (Midjourney, DALL-E 3)
 Enhanced visualization tools
 Mobile deployment examples (Android/iOS)
+
 📄 License
 This project is licensed under the MIT License - see the LICENSE file for details.
+
 🙏 Acknowledgments
 Inspired by Huawei Noah Laboratory's work on AIGC detection
 Built on PyTorch, timm, and Gradio frameworks
