@@ -1,9 +1,4 @@
-# AIGC Detection System: Spatial Domain Local Inconsistency Analysis
-
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.1+-red)](https://pytorch.org/)
-[![CUDA](https://img.shields.io/badge/CUDA-12.1-green)](https://developer.nvidia.com/cuda-toolkit)
-[![License](https://img.shields.io/badge/license-MIT-purple)](LICENSE)
+AIGC Detection System: Spatial Domain Local Inconsistency Analysis
 
 A lightweight, real-time AIGC (AI-Generated Content) detection system targeting modern generative models like **Stable Diffusion XL** and **Flux**. Achieves **83.08% validation accuracy** with only **4.94M parameters**, optimized for edge deployment with a custom CUDA operator delivering **6.7× speedup**.
 
@@ -65,9 +60,9 @@ Prerequisites
 
 Dataset Structure
 
-data/
-├── real/      # Real images (499 samples)
-└── fake/      # AI-generated images (501 samples: SDXL, Flux)
+data
+├── real      # Real images (499 samples)
+└── fake      # AI-generated images (501 samples: SDXL, Flux)
 
 Training
 
