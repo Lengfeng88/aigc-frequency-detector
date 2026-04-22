@@ -1,4 +1,4 @@
-AIGC Detection System: Spatial Domain Local Inconsistency Analysis
+# AIGC Detection System: Spatial Domain Local Inconsistency Analysis
 
 A lightweight, real-time AIGC (AI-Generated Content) detection system targeting modern generative models like **Stable Diffusion XL** and **Flux**. Achieves **83.08% validation accuracy** with only **4.94M parameters**, optimized for edge deployment with a custom CUDA operator delivering **6.7× speedup**.
 
@@ -70,7 +70,7 @@ python train_mobilevit.py
 
 Web Demo
 python demo.py
-Visit http://localhost:7860 to test the detector interactively.
+Visit http://localhost:7860 to test the detector interactively.https://github.com/huggingface/notebooks/blob/main/examples/image_classification.ipynb
 
 Benchmarking
 python benchmark_speedup.py
