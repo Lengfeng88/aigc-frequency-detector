@@ -105,15 +105,6 @@ Training Accuracy: 99.75%
 Generalization Gap: ~16% (reasonable for challenging AIGC detection)
 Dataset: 1000 images (499 real + 501 AI-generated from SDXL/Flux)
 
-Comparison with State-of-the-Art
-
-Comparison with State-of-the-Art
-|          Method        | Accuracy | Parameters | Real-time | Open Source |
-|------------------------|----------|------------|-----------|-------------|
-| Meta DIRE              |   ~92%   |   >100M    |    No     |     Yes     |
-| Microsoft FID          |   ~89%   |    ~86M    |    No     |     No      |
-| Huawei Noah (CVPR'24)  |   ~78%   |    ~5M     |    Yes    |     No      |
-| Our Approach           |   83.08% |   4.94M    |    Yes    |     Yes     |
 
 Technical Insights
 Why Spatial Domain Works for Modern AIGC
