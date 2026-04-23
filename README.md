@@ -103,7 +103,7 @@ Validation Metrics
 Best Validation Accuracy: 83.08%
 Training Accuracy: 99.75%
 Generalization Gap: ~16% (reasonable for challenging AIGC detection)
-Dataset: 1000 images (499 real + 501 AI-generated from SDXL/Flux)
+Dataset: 1000 images (499 real + 501 AI-generated from SD)
 
 
 Technical Insights
