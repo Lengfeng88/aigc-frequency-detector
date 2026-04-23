@@ -59,11 +59,13 @@ Prerequisites
 - 8GB+ RAM
 
 Dataset Structure
-```text
+```
+
 data
 ├── real      # Real images (499 samples)
 └── fake      # AI-generated images (501 samples: SDXL, Flux)
-```text
+```
+
 Training
 
 python train_mobilevit.py
@@ -76,7 +78,8 @@ Benchmarking
 python benchmark_speedup.py
 
 Project Structure
-```text
+```
+
 aigc-frequency-detector/
 ├── csrc/                    # Custom CUDA operator source
 │   ├── gradient_variance.cpp    # C++ frontend + Autograd
@@ -93,7 +96,8 @@ aigc-frequency-detector/
 ├── demo.py                  # Gradio web demo
 ├── benchmark_speedup.py     # Performance benchmarking
 └── requirements.txt         # Dependencies
-```text
+```
+
 Results and Evaluation
 Validation Metrics
 Best Validation Accuracy: 83.08%
