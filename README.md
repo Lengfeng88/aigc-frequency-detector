@@ -10,7 +10,7 @@ Key Innovations
 
 From Frequency to Spatial Domain
 - Initial approach**: FFT/DCT frequency domain analysis (inspired by Huawei Noah Lab)
-- Key insight**: Modern AIGC (SDXL/Flux) has eliminated detectable frequency artifacts
+- Key insight**: Modern AIGC (SD) has eliminated detectable frequency artifacts
 - Pivoted to**: Spatial domain local inconsistency detection using gradient-variance fusion
 
 Custom CUDA Operator
@@ -63,7 +63,7 @@ Dataset Structure
 
 data
 ├── real      # Real images (499 samples)
-└── fake      # AI-generated images (501 samples: SDXL, Flux)
+└── fake      # AI-generated images (501 samples: SD)
 ```
 
 Training
