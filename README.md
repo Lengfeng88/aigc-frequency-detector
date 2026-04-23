@@ -9,16 +9,16 @@ A lightweight, real-time AIGC (AI-Generated Content) detection system targeting 
 Key Innovations
 
 From Frequency to Spatial Domain
-- Initial approach**: FFT/DCT frequency domain analysis (inspired by Huawei Noah Lab)
-- Key insight**: Modern AIGC (SD) has eliminated detectable frequency artifacts
-- Pivoted to**: Spatial domain local inconsistency detection using gradient-variance fusion
+- Initial approach: FFT/DCT frequency domain analysis (inspired by Huawei Noah Lab)
+- Key insight: Modern AIGC (SD) has eliminated detectable frequency artifacts
+- Pivoted to: Spatial domain local inconsistency detection using gradient-variance fusion
 
 Custom CUDA Operator
-- Problem**: Original PyTorch implementation required 6 separate kernel launches with intermediate tensors
-- Solution**: Fused CUDA kernel combining gradient + variance computation
+- Problem: Original PyTorch implementation required 6 separate kernel launches with intermediate tensors
+- Solution: Fused CUDA kernel combining gradient + variance computation
 - Results: 
-  - 6.7× speedup** (0.291ms → 0.044ms on RTX 4080)
-  - 100% memory reduction** (eliminates 4.5MB intermediate allocations)
+  - 6.7× speedup (0.291ms → 0.044ms on RTX 4080)
+  - 100% memory reduction (eliminates 4.5MB intermediate allocations)
   - Perfect scaling** across batch sizes and resolutions
 
 Edge-Optimized Architecture
