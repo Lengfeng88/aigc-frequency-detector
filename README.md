@@ -1,6 +1,6 @@
 # AIGC Detection System: Spatial Domain Local Inconsistency Analysis
 
-A lightweight, real-time AIGC (AI-Generated Content) detection system targeting modern generative models like **Stable Diffusion XL** and **Flux**. Achieves **83.08% validation accuracy** with only **4.94M parameters**, optimized for edge deployment with a custom CUDA operator delivering **6.7× speedup**.
+A lightweight, real-time AIGC (AI-Generated Content) detection system targeting modern generative models like Stable Diffusion. Achieves **83.08% validation accuracy** with only **4.94M parameters**, optimized for edge deployment with a custom CUDA operator delivering **6.7× speedup**.
 
 <p align="center">
   <img src="assets/demo_screenshot.png" alt="Demo Screenshot" width="600"/>
