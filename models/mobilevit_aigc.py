@@ -5,20 +5,20 @@ from timm import create_model
 
 class MobileViT_AIGC(nn.Module):
     """
-    基于 MobileViT-S 的 AIGC 检测器
-    - 输入: (3, H, W) RGB 图像
-    - 输出: 2 类 (0=真实, 1=AI生成)
+    AIGC Detector Based on MobileViT-S
+       - Input: (3, H, W) RGB image
+       - Output: 2 classes (0=real, 1=AI generated)
     """
     def __init__(self, num_classes=2, pretrained=False):
         super().__init__()
-        # 加载 MobileViT-S（ImageNet 预训练可选）
+        # Load MobileViT-S (ImageNet pre-training optional)
         self.backbone = create_model(
             'mobilevit_s',
-            pretrained=pretrained,      # 设为 False 避免分布偏移
+            pretrained=pretrained,      # Set to False to avoid distribution shift.
             num_classes=num_classes,
             in_chans=3
         )
-        # 如果不加载预训练，需初始化分类头
+        # If pre-training is not loaded, the classification head needs to be initialized.
         if not pretrained:
             self._init_weights()
 
