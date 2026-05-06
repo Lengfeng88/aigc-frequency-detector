@@ -2,7 +2,7 @@
 from utils.freq_transform import visualize_freq_spectrum
 import os
 
-# 找一张真实图和一张 AI 图
+# Find a real image and an AI image.
 real_img = None
 fake_img = None
 
@@ -21,9 +21,9 @@ for root, _, files in os.walk("data/fake"):
     if fake_img: break
 
 if real_img and fake_img:
-    print("🔍 正在生成频域可视化...")
+    print("Generating frequency domain visualization...")
     visualize_freq_spectrum("data/fake/sd_001.png", "fake_dct.png", mode='dct')
     visualize_freq_spectrum("data/real/nature.jpg", "real_dct.png", mode='dct')
-    print("✅ 可视化已保存为: debug_real_freq.png, debug_fake_freq.png")
+    print("The visualization has been saved as: debug_real_freq.png, debug_fake_freq.png")
 else:
-    print("❌ 未找到图像")
+    print("Image not found")
