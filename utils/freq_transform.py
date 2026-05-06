@@ -6,27 +6,26 @@ from scipy.ndimage import zoom
 
 def rgb_to_fft_mag(image: np.ndarray) -> np.ndarray:
     """
-    将 HxWx3 RGB 图像转换为频域对数幅度谱（保留空间结构）。
-    
+    Convert an HxWx3 RGB image to a frequency domain logarithmic magnitude spectrum (preserving spatial structure).
     Args:
-        image (np.ndarray): 形状为 (H, W, 3)，dtype=uint8 或 float32
-        
-    Returns:
-        np.ndarray: 形状为 (H, W, 3)，值已归一化到 [0, 1]，适合 CNN 输入
+       image(np.ndarray): Shape (H, W, 3), dtype=uint8 or float32
+
+   Returns:
+       np.ndarray: Shape (H, W, 3), values ​​normalized to [0, 1], suitable for CNN input.
     """
     if image.dtype == np.uint8:
         image = image.astype(np.float32)
     
     fft_channels = []
-    for i in range(3):  # R, G, B 通道分别做 FFT
+    for i in range(3):  # R, G, B the channels separately do FFT
         f = np.fft.fft2(image[:, :, i])
         fshift = np.fft.fftshift(f)
-        magnitude = np.log(np.abs(fshift) + 1e-8)  # 避免除零
+        magnitude = np.log(np.abs(fshift) + 1e-8)  # Avoid division by zero
         fft_channels.append(magnitude)
     
     freq_img = np.stack(fft_channels, axis=-1)  # (H, W, 3)
     
-    # 全局归一化到 [0, 1]
+    # Global normalization to [0, 1]
     min_val = freq_img.min()
     max_val = freq_img.max()
     if max_val - min_val > 1e-6:
@@ -39,20 +38,18 @@ def rgb_to_fft_mag(image: np.ndarray) -> np.ndarray:
 
 def rgb_to_dct_blocks(image: np.ndarray, block_size: int = 8) -> np.ndarray:
     """
-    将图像分块进行 DCT，提取高频子块（右下 4x4）的能量作为特征。
-    
+    The image is divided into blocks and subjected to DCT. The energy of the high-frequency sub-block (bottom right 4x4) is extracted as features.
     Args:
-        image (np.ndarray): (H, W, 3) RGB 图像
-        block_size (int): DCT 分块大小（默认 8x8）
-        
+       image (np.ndarray): (H, W, 3) RGB image
+       block_size (int): DCT block size (default 8x8)
     Returns:
-        np.ndarray: (H_b, W_b, 3)，每个位置表示该块的高频能量
+       np.ndarray: (H_b, W_b, 3), each position represents the high-frequency energy of that block
     """
     if image.dtype == np.uint8:
         image = image.astype(np.float32)
     
     h, w = image.shape[:2]
-    # 裁剪到 block_size 整除
+    # Clipping to a value divisible by block_size
     h_crop = (h // block_size) * block_size
     w_crop = (w // block_size) * block_size
     img_cropped = image[:h_crop, :w_crop]
@@ -66,9 +63,9 @@ def rgb_to_dct_blocks(image: np.ndarray, block_size: int = 8) -> np.ndarray:
             for j in range(0, w_crop, block_size):
                 block = channel[i:i+block_size, j:j+block_size]
                 dct_block = cv2.dct(block)  # shape: (8, 8)
-                # 提取高频区域：右下 4x4（索引 [4:, 4:]）
+                # Extract the high-frequency region: bottom right 4x4 (index [4:, 4:])
                 high_freq = dct_block[4:, 4:]  # shape: (4, 4)
-                energy = np.linalg.norm(high_freq)  # L2 范数作为能量
+                energy = np.linalg.norm(high_freq)  # L2 Norm as energy
                 row_energies.append(energy)
             energy_map.append(row_energies)
         dct_energy_list.append(np.array(energy_map))  # (H_b, W_b)
@@ -76,7 +73,7 @@ def rgb_to_dct_blocks(image: np.ndarray, block_size: int = 8) -> np.ndarray:
     # 合并为 (H_b, W_b, 3)
     dct_energy = np.stack(dct_energy_list, axis=-1)
     
-    # 全局归一化到 [0, 1]
+    # Global normalization to [0, 1]
     min_val = dct_energy.min()
     max_val = dct_energy.max()
     if max_val - min_val > 1e-6:
@@ -93,19 +90,17 @@ def preprocess_image_for_freq_cnn(
     mode: str = 'fft'
 ) -> torch.Tensor:
     """
-    从文件路径加载图像，预处理为频域张量。
-    
+    Load the image from the file path and preprocess it into a frequency domain tensor.
     Args:
-        image_path (str): 图像路径
-        target_size (int): 输入网络的尺寸（如 224）
-        mode (str): 'fft' 或 'dct'
-        
+       image_path (str): Image path
+       target_size (int): Size of the input network (e.g., 2^24)
+       mode (str): 'fft' or 'dct'
     Returns:
-        torch.Tensor: 形状为 (3, H, W)，dtype=torch.float32
+       torch.Tensor: Shape (3, H, W), dtype=torch.float32
     """
     img_bgr = cv2.imread(image_path)
     if img_bgr is None:
-        raise ValueError(f"无法读取图像: {image_path}")
+        raise ValueError(f"Unable to read image: {image_path}")
     img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
     img_resized = cv2.resize(img_rgb, (target_size, target_size))
     
@@ -113,21 +108,21 @@ def preprocess_image_for_freq_cnn(
         freq_img = rgb_to_fft_mag(img_resized)
     elif mode == 'dct':
         dct_energy = rgb_to_dct_blocks(img_resized, block_size=8)
-        # 上采样回 target_size x target_size
+        # Upsampling target_size x target_size
         h_b, w_b, c = dct_energy.shape
         scale_h = target_size / h_b
         scale_w = target_size / w_b
-        freq_img = zoom(dct_energy, (scale_h, scale_w, 1), order=1)  # 双线性插值
+        freq_img = zoom(dct_energy, (scale_h, scale_w, 1), order=1)  # Bilinear interpolation
     else:
-        raise ValueError("mode 必须是 'fft' 或 'dct'")
+        raise ValueError("mode must be 'fft' or 'dct'")
     
-    # 转为 PyTorch 张量: (H, W, C) → (C, H, W)
+    # Convert to PyTorch tensors: (H, W, C) → (C, H, W)
     tensor = torch.from_numpy(freq_img).permute(2, 0, 1).float()
     return tensor
 
 
 # ========================
-# 可视化辅助函数（支持 FFT 和 DCT）
+# Visualization helper functions (supports FFT and DCT)
 # ========================
 def visualize_freq_spectrum(
     image_path: str,
@@ -135,12 +130,11 @@ def visualize_freq_spectrum(
     mode: str = 'fft'
 ):
     """
-    可视化原始图像和其频域特征（FFT 幅度谱 或 DCT 高频能量图）。
-    
+    Visualize the raw image and its frequency domain features (FFT amplitude spectrum or DCT high-frequency energy map).
     Args:
-        image_path (str): 输入图像路径
-        save_path (str): 保存路径（若为 None 则显示窗口）
-        mode (str): 'fft' 或 'dct'
+       image_path (str): Input image path
+       save_path (str): Save path (displays a window if None)
+       mode (str): 'fft' or 'dct'
     """
     import matplotlib.pyplot as plt
     
@@ -152,7 +146,7 @@ def visualize_freq_spectrum(
         title = "FFT Magnitude (Log Scale)"
     elif mode == 'dct':
         dct_energy = rgb_to_dct_blocks(img_rgb, block_size=8)
-        # 上采样用于可视化（保持原图尺寸）
+        # Upsampling is used for visualization (preserving the original image size).
         h, w = img_rgb.shape[:2]
         h_b, w_b, _ = dct_energy.shape
         scale_h = h / h_b
@@ -160,20 +154,20 @@ def visualize_freq_spectrum(
         freq_img = zoom(dct_energy, (scale_h, scale_w, 1), order=1)
         title = "DCT High-Freq Energy"
     else:
-        raise ValueError("mode 必须是 'fft' 或 'dct'")
+        raise ValueError("mode must be 'fft' or 'dct'")
     
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
     axes[0].imshow(img_rgb)
     axes[0].set_title("Original Image")
     axes[0].axis('off')
     
-    # 使用热力图突出能量差异
-    axes[1].imshow(freq_img[:, :, 1], cmap='hot')  # 显示绿色通道能量
+    # Use heatmaps to highlight energy differences
+    axes[1].imshow(freq_img[:, :, 1], cmap='hot')  # Displaying green channel energy
     axes[1].set_title(title)
     axes[1].axis('off')
     
     if save_path:
         plt.savefig(save_path, bbox_inches='tight', dpi=150)
-        print(f"✅ 可视化已保存至: {save_path}")
+        print(f"The visualization has been saved to: {save_path}")
     else:
         plt.show()
