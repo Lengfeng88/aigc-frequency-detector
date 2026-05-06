@@ -11,9 +11,9 @@ from pathlib import Path
 # Import your custom operator
 try:
     from gradient_variance_cuda import forward as gradient_variance_forward
-    print("✅ Custom gradient-variance operator loaded")
+    print("Custom gradient-variance operator loaded")
 except ImportError:
-    print("❌ Custom operator not found, using fallback")
+    print("Custom operator not found, using fallback")
     gradient_variance_forward = None
 
 # ----------------------------
@@ -37,7 +37,7 @@ class AIGCRGBDataset(Dataset):
         image = Image.open(img_path).convert("RGB")
         if self.transform:
             image = self.transform(image)
-        # ✅ Return CPU tensor - NO .cuda() here!
+        # Return CPU tensor - NO .cuda() here!
         return image, label
 
 
@@ -65,8 +65,8 @@ def load_and_split_data(data_root, train_ratio=0.8, seed=42):
     random.shuffle(train_samples)
     random.shuffle(val_samples)
     
-    print(f"✅ 加载完成: {len(real_paths)} 真实图, {len(fake_paths)} AI图")
-    print(f"📊 训练集: {len(train_samples)}, 验证集: {len(val_samples)}")
+    print(f"Loading complete: {len(real_paths)} Real picture, {len(fake_paths)} AI-generated picture")
+    print(f"training set: {len(train_samples)}, Validation set: {len(val_samples)}")
     return train_samples, val_samples
 
 
@@ -99,7 +99,7 @@ def train_one_epoch(model, loader, criterion, optimizer, device):
     model.train()
     total_loss, correct, total = 0, 0, 0
     for data, target in loader:
-        # ✅ Move to GPU in main process
+        # Move to GPU in main process
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
@@ -152,7 +152,7 @@ def main():
     
     # Create model with custom operator
     model = MobileViT_AIGC(num_classes=2, use_custom_op=True).to(DEVICE)
-    print(f"✅ MobileViT-S 已创建，参数量: {sum(p.numel() for p in model.parameters())/1e6:.2f}M")
+    print(f"MobileViT-S Created, number of parameters: {sum(p.numel() for p in model.parameters())/1e6:.2f}M")
     
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr=LR, weight_decay=1e-4)
@@ -171,9 +171,9 @@ def main():
         if val_acc > best_acc:
             best_acc = val_acc
             torch.save(model.state_dict(), SAVE_PATH)
-            print(f"💾 模型已保存至: {SAVE_PATH}")
+            print(f"The model has been saved to: {SAVE_PATH}")
     
-    print(f"🎉 训练完成！最佳验证准确率: {best_acc:.2f}%")
+    print(f"Training complete! Optimal validation accuracy achieved.: {best_acc:.2f}%")
 
 
 if __name__ == '__main__':
