@@ -2,7 +2,7 @@ import os
 import torch
 from torch.utils.data import DataLoader, Dataset
 from utils.dataset import AIGCFrequencyDataset
-from utils.freq_residual import preprocess_for_fra  # ← 关键：使用 FRA
+from utils.freq_residual import preprocess_for_fra  # Key point: Use FRA
 from models.mobilenetv3_freq import create_freq_model, train_one_epoch, validate, save_model
 
 
@@ -16,7 +16,7 @@ class SubsetDataset(Dataset):
 
     def __getitem__(self, idx):
         img_path, label = self.samples[idx]
-        tensor = preprocess_for_fra(img_path, self.target_size)  # ← 单通道 (1, H, W)
+        tensor = preprocess_for_fra(img_path, self.target_size)  # single channel (1, H, W)
         return tensor, label
 
 
@@ -30,27 +30,27 @@ def main():
 
     os.makedirs('checkpoints', exist_ok=True)
 
-    # 加载数据
+    # Loading data
     full_dataset = AIGCFrequencyDataset(data_root='data', target_size=TARGET_SIZE)
     train_samples, val_samples = full_dataset.split_dataset(train_ratio=0.8, seed=42)
 
-    # 创建子集
+    # Create a subset
     train_dataset = SubsetDataset(train_samples, target_size=TARGET_SIZE)
     val_dataset = SubsetDataset(val_samples, target_size=TARGET_SIZE)
 
-    # 打印验证集分布
+    # Print the distribution of the validation set
     val_labels = [label for _, label in val_dataset.samples]
     real_val = sum(1 for l in val_labels if l == 0)
     fake_val = sum(1 for l in val_labels if l == 1)
-    print(f"🔍 验证集分布 → 真实: {real_val}, AI生成: {fake_val}")
+    print(f"Validation set distribution → Real: {real_val}, AI-generated: {fake_val}")
 
     # DataLoader
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=2)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=2)
 
-    print(f"📊 训练集: {len(train_dataset)} | 验证集: {len(val_dataset)}")
+    print(f"training set: {len(train_dataset)} | Validation set: {len(val_dataset)}")
 
-    # 模型
+    # model
     model = create_freq_model(model_name='mobilenetv3', device=DEVICE)
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=LR)
@@ -68,7 +68,7 @@ def main():
             best_val_acc = val_acc
             save_model(model, SAVE_PATH)
 
-    print(f"🎉 训练完成！最佳验证准确率: {best_val_acc:.2f}%")
+    print(f"Training complete! Optimal validation accuracy achieved: {best_val_acc:.2f}%")
 
 
 if __name__ == '__main__':
