@@ -10,13 +10,13 @@ from pathlib import Path
 from models.mobilevit_aigc import MobileViT_AIGC
 
 # ----------------------------
-# 数据集类（直接加载原始图像）
+# Dataset class (directly loads the original image)
 # ----------------------------
 class AIGCRGBDataset(Dataset):
     def __init__(self, samples, transform=None):
         self.samples = samples
         self.transform = transform or transforms.Compose([
-            transforms.Resize((256, 256)),  # MobileViT 推荐 256x256
+            transforms.Resize((256, 256)),  # MobileViT recommend 256x256
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], 
                                  std=[0.229, 0.224, 0.225])
@@ -34,7 +34,7 @@ class AIGCRGBDataset(Dataset):
 
 
 # ----------------------------
-# 辅助函数：划分数据集
+# Auxiliary function: Splitting the dataset
 # ----------------------------
 def load_and_split_data(data_root, train_ratio=0.8, seed=42):
     data_root = Path(data_root)
@@ -57,13 +57,13 @@ def load_and_split_data(data_root, train_ratio=0.8, seed=42):
     random.shuffle(train_samples)
     random.shuffle(val_samples)
     
-    print(f"✅ 加载完成: {len(real_paths)} 真实图, {len(fake_paths)} AI图")
-    print(f"📊 训练集: {len(train_samples)}, 验证集: {len(val_samples)}")
+    print(f"Loading complete: {len(real_paths)} real pictures, {len(fake_paths)} AI-generated pictures")
+    print(f"training set: {len(train_samples)}, Validation set: {len(val_samples)}")
     return train_samples, val_samples
 
 
 # ----------------------------
-# 训练/验证循环
+# Training/Validation Loop
 # ----------------------------
 def train_one_epoch(model, loader, criterion, optimizer, device):
     model.train()
@@ -97,7 +97,7 @@ def validate(model, loader, criterion, device):
 
 
 # ----------------------------
-# 主函数
+# main function
 # ----------------------------
 def main():
     DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -108,19 +108,19 @@ def main():
     
     os.makedirs('checkpoints', exist_ok=True)
     
-    # 加载数据
+    # loading data
     train_samples, val_samples = load_and_split_data('data')
     
-    # 创建数据集
+    # Create a dataset
     train_dataset = AIGCRGBDataset(train_samples)
     val_dataset = AIGCRGBDataset(val_samples)
     
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=2)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=2)
     
-    # 模型（不加载 ImageNet 预训练，避免分布偏移）
+    # The model (without loading ImageNet pre-training to avoid distribution bias)
     model = MobileViT_AIGC(num_classes=2, pretrained=False).to(DEVICE)
-    print(f"✅ MobileViT-S 已创建，参数量: {sum(p.numel() for p in model.parameters())/1e6:.2f}M")
+    print(f"MobileViT-S created, number of parameters: {sum(p.numel() for p in model.parameters())/1e6:.2f}M")
     
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr=LR, weight_decay=1e-4)
@@ -139,9 +139,9 @@ def main():
         if val_acc > best_acc:
             best_acc = val_acc
             torch.save(model.state_dict(), SAVE_PATH)
-            print(f"💾 模型已保存至: {SAVE_PATH}")
+            print(f"The model has been saved to: {SAVE_PATH}")
     
-    print(f"🎉 训练完成！最佳验证准确率: {best_acc:.2f}%")
+    print(f"Training complete! Optimal validation accuracy achieved: {best_acc:.2f}%")
 
 
 if __name__ == '__main__':
