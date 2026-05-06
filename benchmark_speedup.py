@@ -8,10 +8,10 @@ import statistics
 try:
     from gradient_variance_cuda import forward as custom_gradient_variance
     CUSTOM_OP_AVAILABLE = True
-    print("✅ Custom gradient-variance operator loaded")
+    print("Custom gradient-variance operator loaded")
 except ImportError:
     CUSTOM_OP_AVAILABLE = False
-    print("❌ Custom operator not available")
+    print("Custom operator not available")
 
 def original_gradient_variance(img, alpha=0.6, beta=0.4):
     """Original PyTorch implementation"""
