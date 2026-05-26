@@ -19,7 +19,7 @@ Custom CUDA Operator
 - Results: 
   - 6.7× speedup (0.291ms → 0.044ms on RTX 4080)
   - 100% memory reduction (eliminates 4.5MB intermediate allocations)
-  - Perfect scaling** across batch sizes and resolutions
+  - Perfect scaling across batch sizes and resolutions
 
 Edge-Optimized Architecture
 - Model: MobileViT-S (4.94M parameters)
@@ -106,7 +106,7 @@ Generalization Gap: ~16% (reasonable for challenging AIGC detection)
 Dataset: 1000 images (499 real + 501 AI-generated from SD)
 
 
-Technical Insights
+Technical Insights:
 Why Spatial Domain Works for Modern AIGC
 Modern generative models have eliminated frequency-domain artifacts but still exhibit local inconsistencies:
 Structural errors: Incorrect finger counts, impossible poses
